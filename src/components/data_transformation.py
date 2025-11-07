@@ -9,6 +9,7 @@ from src.logger import logging
 from src.exception import CustomException
 from sklearn.impute import SimpleImputer
 import os
+from src.utils import save_object
 
 @dataclass
 class DataTransformationConfig:
@@ -22,7 +23,7 @@ class DataTransformation:
         try:
             logging.info("Data Transformation initiated")
 
-            numerical_columns = ['age', 'bmi', 'children']
+            numerical_columns = ['reading_score', 'writing_score']
             categorical_columns =[
                "gender",
                "race_ethnicity",
