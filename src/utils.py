@@ -2,6 +2,7 @@ import os
 import sys
 import dill
 from sklearn.metrics import r2_score
+from sklearn.model_selection import GridSearchCV
 from src.exception import CustomException
 
 
@@ -20,25 +21,36 @@ def save_object(file_path, obj):
         raise CustomException(e, sys)
 
 
-def evaluate_models(x_train, y_train, x_test, y_test, models):
+def evaluate_models(x_train, y_train, x_test, y_test, models, param):
     """
-    Trains multiple models and evaluates them using R2 score
+    Performs GridSearchCV for multiple models and
+    returns their R2 scores
     """
     try:
         report = {}
 
         for model_name, model in models.items():
-            # Train model
-            model.fit(x_train, y_train)
+            params = param.get(model_name, {})
 
-            # Predict on test data
-            y_test_pred = model.predict(x_test)
+            gs = GridSearchCV(
+                estimator=model,
+                param_grid=params,
+                cv=3,
+                scoring="r2",
+                n_jobs=-1
+            )
 
-            # Calculate R2 score
+            gs.fit(x_train, y_train)
+
+            best_model = gs.best_estimator_
+
+            y_test_pred = best_model.predict(x_test)
             test_model_score = r2_score(y_test, y_test_pred)
 
-            # Store result
             report[model_name] = test_model_score
+
+            # update model with best version
+            models[model_name] = best_model
 
         return report
 

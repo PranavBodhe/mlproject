@@ -49,6 +49,35 @@ class ModelTrainer:
                 "AdaBoost Regressor": AdaBoostRegressor(),
             }
 
+            params = {
+                "Decision Tree": {
+                    "criterion": ["squared_error", "friedman_mse", "absolute_error", "poisson"]
+                },
+                "Random Forest": {
+                    "n_estimators": [16, 32, 64]
+                },
+                "Gradient Boosting": {
+                    "learning_rate": [0.1, 0.05],
+                    "n_estimators": [32, 64]
+                },
+                "Linear Regression": {},
+                "K-Neighbours Regressor": {
+                    "n_neighbors": [5, 7, 9]
+                },
+                "XGB Regressor": {
+                    "learning_rate": [0.1, 0.05],
+                    "n_estimators": [32, 64]
+                },
+                "CatBoosting Regressor": {
+                    "depth": [6, 8],
+                    "learning_rate": [0.1, 0.05]
+                },
+                "AdaBoost Regressor": {
+                    "learning_rate": [0.1, 0.05],
+                    "n_estimators": [32, 64]
+                },
+            }
+
             logging.info("Evaluating models")
 
             model_report = evaluate_models(
@@ -56,7 +85,8 @@ class ModelTrainer:
                 y_train=y_train,
                 x_test=X_test,
                 y_test=y_test,
-                models=models
+                models=models,
+                param=params
             )
 
             best_model_score = max(model_report.values())
